@@ -1,30 +1,30 @@
 import asyncio
+import csv
 import random
 import pyttsx3
-from os.path import exists
-
 import pyttsx3.voice
+from os.path import exists
+from settings import Settings
+
 
 class Dictionary:
-    def __init__(self, fileName: str, separator: str, langQuiz: str, langAnswer: str) -> None:
+    def __init__(self, settings: Settings) -> None:
         self._engine = pyttsx3.init()
 
         voices = self._engine.getProperty('voices')
-        self._askLang = self.__find_lang_object(langQuiz, voices)
-        self._answerLang = self.__find_lang_object(langAnswer, voices)
+        self._askLang = self.__find_lang_object(settings.langQuiz, voices)
+        self._answerLang = self.__find_lang_object(settings.langAnswer, voices)
 
         if self._askLang is None:
-            Exception("Language `" + langQuiz + "` not found")
+            Exception("Language `" + settings.langQuiz + "` not found")
 
         if self._answerLang is None:
-            Exception("Language `" + langAnswer + "` not found")
+            Exception("Language `" + settings.langAnswer + "` not found")
 
         rate = self._engine.getProperty('rate')
         self._engine.setProperty('rate', rate-50)
 
-        text = self.__read_file(fileName)
-        self.keys, self._d = self.__parse_file(text, separator)
-
+        self.keys, self._d = self.__read_csv_like_file(settings)
 
     def __find_lang_object(self, lang: str, voices: list) -> pyttsx3.voice.Voice:
         return next(l for l in voices if lang in l.name)
@@ -36,7 +36,10 @@ class Dictionary:
             self._word = random.choice(self.keys)
             self._engine.setProperty('voice', self._askLang.id)
             self._engine.say(self._word)
-            self._engine.runAndWait()
+            try:
+                self._engine.runAndWait()
+            except:
+                pass
             dt = 0
             while dt < timeout and not self._stopThread:
                 dt += 1
@@ -57,21 +60,23 @@ class Dictionary:
         phrase = "Correct. The answer is " if correct else "Wrong. The correct answer is "
         self._engine.say(phrase)
         self._engine.say(right_answer)
-        self._engine.runAndWait()
+        try:
+            self._engine.runAndWait()
+        except:
+            pass
 
-    def __read_file(self, fileName: str) -> str:
-        if not exists(fileName):
-            err = "The file " + fileName + " doesn't exist"
+    def __read_csv_like_file(self, settings: Settings) -> {list, dict}:
+        if not exists(settings.fileName):
+            err = "The file " + settings.fileName + " doesn't exist"
             return err + "," + err
-        with open(fileName, mode="r+") as f:
-            return f.read()
-            
-    def __parse_file(self, text: str, separator: str) -> {list, dict}:
-        keys = []
-        d = dict()
-        for line in text.split('\n'):
-            pair = line.split(separator)
-            keys.append(pair[0])
-            d[pair[0]] = pair[1]
+        with open(settings.fileName, mode="r+") as f:
+            reader = csv.reader(f, delimiter=settings.delimeter)
+            for _ in range(0, settings.headerLines):
+                next(reader)
+            keys = []
+            d = dict()
+            for row in reader:
+                keys.append(row[settings.questionIndex])
+                d[row[settings.questionIndex]] = row[settings.answerIndex]
 
-        return keys, d
+            return keys, d

@@ -1,0 +1,9 @@
+class Settings:
+    fileName: str
+    delimeter: str
+    langQuiz: str
+    langAnswer: str
+    questionIndex: int
+    answerIndex: int
+    headerLines: int
+    timeout: int

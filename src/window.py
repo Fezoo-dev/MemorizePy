@@ -2,10 +2,11 @@ import asyncio
 import threading
 import tkinter as tk
 from dictionary import Dictionary
+from settings import Settings
 
 class Window:
-    def __init__(self, fileName: str, separator: str = ",", langQuiz: str = "Russian", langAnswer: str = "Russian"):
-        self._dictionary = Dictionary(fileName, separator, langQuiz, langAnswer)
+    def __init__(self, settings: Settings):
+        self._dictionary = Dictionary(settings)
 
     def run(self, timeout: int):
 
