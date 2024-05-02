@@ -66,11 +66,11 @@ class Dictionary:
             pass
 
     def __read_csv_like_file(self, settings: Settings) -> {list, dict}:
-        if not exists(settings.fileName):
-            err = "The file " + settings.fileName + " doesn't exist"
+        if not exists(settings.pathToFile):
+            err = "The file " + settings.pathToFile + " doesn't exist"
             return err + "," + err
-        with open(settings.fileName, mode="r+") as f:
-            reader = csv.reader(f, delimiter=settings.delimeter)
+        with open(settings.pathToFile, mode="r") as f:
+            reader = csv.reader(f, delimiter=settings.delimiter)
             for _ in range(0, settings.headerLines):
                 next(reader)
             keys = []

@@ -1,6 +1,7 @@
 @echo off
-@color 2
+@color 3
 @cls
+@echo Checking for the python installation...
 @python --version >NUL
 if errorlevel 1 (
     color 4
@@ -9,7 +10,7 @@ if errorlevel 1 (
     pause
     exit
 )
-@echo Installing requirements. Please wait...
+@echo The python is installed. Checking for the requirements. Please wait...
 @pip install -r requirements.txt >NUL
 if errorlevel 1 (
     color 4

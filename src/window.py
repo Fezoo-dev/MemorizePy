@@ -15,7 +15,7 @@ class Window:
         self._root.bind('<Return>', lambda event: self.__set_result())
 
         self._answerField = tk.Entry(self._root)
-        self._answerField.pack(side=tk.LEFT)
+        self._answerField.pack(side=tk.LEFT, expand=True, fill=tk.X)
         self._answerField.focus()
 
         button = tk.Button(self._root, text='Submit', command=lambda: self.__set_result())

@@ -1,6 +1,6 @@
 class Settings:
-    fileName: str
-    delimeter: str
+    pathToFile: str
+    delimiter: str
     langQuiz: str
     langAnswer: str
     questionIndex: int
